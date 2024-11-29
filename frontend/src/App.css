@@ -21,6 +21,10 @@ nav ul {
   background-color: rgb(105, 132, 130);
   flex-wrap: wrap;
 }
+.titel {
+  display: flex;
+  justify-content: center;
+}
 nav ul li {
   text-align: center;
   width: 1fr;
@@ -47,6 +51,19 @@ section h2 {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: grid;
   gap: 30px;
+}
+.überschrift {
+  margin-top: 10px;
+  justify-content: center;
+  background: #686363;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 30px;
+  background-image: url("todo.png");
+  background-size: cover; /* Bild wird skaliert, um den gesamten Bereich zu bedecken */
+  background-position: center; /* Bild wird zentriert */
 }
 .gsl-gruppe {
   display: flex;
