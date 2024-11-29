@@ -1,8 +1,9 @@
-const express = require("express");
-const path = require("path");
+const express = require('express');
+const path = require('path');
 const app = express();
 const PORT = 2000;
-const cors = require("cors"); // CORS, damit Frontend auf API zugreifen kann
+const cors = require('cors'); // CORS, damit Frontend auf API zugreifen kann
+const fs = require('fs')
 
 app.get("/", (req, res) => {
   const filePath = path.join(__dirname, "..", "frontend", "index.html");
@@ -12,49 +13,55 @@ app.get("/", (req, res) => {
 app.use(cors());
 app.use(express.json()); // Middleware zum Parsen von JSON-Dateien
 
-let todo = [];
-let done = [];
+//Path to JSON file
+const filePath = path.join(__dirname, 'tasks.json');
 
-// Korrigierte Route: API-Endpunkt zum Abrufen von Aufgaben
+//Read tasks from JSON fike
+const readTasks = () => {
+  const data = fs.readFileSync(filePath);
+  return JSON.parse(data);
+};
+
+//Write to JSON file
+const writeTasks = (tasks) => {
+  fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+};
+
+//Abrufen von tasks
 app.get('/api/tasks', (req, res) => {
+  const { todo, done } = readTasks();
   res.json({ todo, done });
 });
 
-//Aufgabe zu TODO hinzufügen
+//Task zu TODO hinzufuegen
 app.post('/api/todo', (req, res) => {
-  const task = req.body.task; // Aufgabe aus dem Request-Body
-  if (task) {
-    todo.push(task);
-    res.status(201).json({ message: "Aufgabe hinzugefügt", task });
-  } else {
-    res.status(400).json({ message: "Ungültige Eingabe" });
-  }
-});
-
-//Aufgabe zu DONE hinzufügen
-app.post('/api/done', (req, res) => {
-  const task = req.body.task; // Aufgabe aus dem Request-Body
-  if (task) {
-    done.push(task);
-    res.status(201).json({ message: "Aufgabe abgeschlossen", task });
-  } else {
-    res.status(400).json({ message: "Ungültige Eingabe" });
-  }
-});
-
-//Einträge bearbeiten
-app.post('/api/todo/edit', (req, res) => {
-    const { oldTask, newTask } = req.body; // alte und neue Aufgabe aus dem Request-Body
-    const index = todo.indexOf(oldTask);
-    if (index !== -1 && newTask) {
-        todo[index] = newTask; // Aufgabe aktualisieren
-        res.json({ message: 'Aufgabe aktualisiert', task: newTask });
+    const { task } = req.body; // Task from request body
+    if (task) {
+        const tasks = readTasks();
+        tasks.todo.push(task);
+        writeTasks(tasks); // Save updated tasks to the JSON file
+        res.status(201).json({ message: 'Task added', task });
     } else {
-        res.status(404).json({ message: 'Aufgabe nicht gefunden oder ungültige Eingabe' });
+        res.status(400).json({ message: 'Invalid input' });
     }
 });
 
-// PUT-Endpunkt: Aufgabe von TODO nach DONE verschieben
+//TODO task bearbeiten
+app.post('/api/todo/edit', (req, res) => {
+    const { oldTask, newTask } = req.body; // Old and new task from request body
+    const tasks = readTasks();
+    const index = tasks.todo.indexOf(oldTask);
+    if (index !== -1 && newTask) {
+        tasks.todo[index] = newTask; // Update task
+        writeTasks(tasks); // Save updated tasks to the JSON file
+        res.json({ message: 'Task updated', task: newTask });
+    } else {
+        res.status(404).json({ message: 'Task not found or invalid input' });
+    }
+});
+
+
+//Task zu done schieben
 app.put('/api/tasks/move', (req, res) => {
   const { task } = req.body; // Aufgabe aus dem Request-Body
   const index = todo.indexOf(task);
@@ -69,9 +76,9 @@ app.put('/api/tasks/move', (req, res) => {
 
 //Alle Einträge löschen
 app.delete('/api/tasks', (req, res) => {
-    todo = []; // Lösche alle TODOs
-    done = []; // Lösche alle DONEs
-    res.json({ message: 'Alle Aufgaben wurden gelöscht' });
+    const tasks = { todo: [], done: [] }; // Reset tasks
+    writeTasks(tasks); // Save empty tasks to the JSON file
+    res.json({ message: 'All tasks deleted' });
 });
 
 app.listen(PORT, () => {
