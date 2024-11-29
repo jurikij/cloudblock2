@@ -1,36 +1,60 @@
 // src/components/TaskEdit.jsx
 import React, { useState, useEffect } from "react";
 
-const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
-  const [task, setTask] = useState("");
+const EditTask = () => {
+    const [oldTask, setOldTask] = useState('');
+    const [newTask, setNewTask] = useState('');
+    const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    if (taskToEdit) {
-      setTask(taskToEdit);
-    }
-  }, [taskToEdit]);
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent default form submission
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (task) {
-      onUpdateTask(setTask); // Aufgabe aktualisieren
-    }
-  };
+        try {
+            const response = await axios.post('http://localhost:3000/api/todo/edit', {
+                oldTask,
+                newTask,
+            });
+            setMessage(response.data.message);
+        } catch (error) {
+            if (error.response) {
+                setMessage(error.response.data.message); // Display error message from server
+            } else {
+                setMessage('An error occurred while updating the task.');
+            }
+        }
+    };
 
-  return (
-    <div>
-      <h2>Aufgabe bearbeiten</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          placeholder="Aufgabe bearbeiten"
-        />
-        <button type="submit">Speichern</button>
-      </form>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Edit Task</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>
+                        Old Task:
+                        <input
+                            type="text"
+                            value={oldTask}
+                            onChange={(e) => setOldTask(e.target.value)}
+                            required
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        New Task:
+                        <input
+                            type="text"
+                            value={newTask}
+                            onChange={(e) => setNewTask(e.target.value)}
+                            required
+                        />
+                    </label>
+                </div>
+                <button type="submit">Update Task</button>
+            </form>
+            {message && <p>{message}</p>} {/* Display success/error message */}
+        </div>
+    );
 };
 
 export default TaskEdit;

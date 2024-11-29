@@ -47,7 +47,7 @@ app.post('/api/todo', (req, res) => {
 });
 
 //TODO task bearbeiten
-app.post('/api/todo/edit', (req, res) => {
+app.put('/api/todo/edit', (req, res) => {
     const { oldTask, newTask } = req.body; // Old and new task from request body
     const tasks = readTasks();
     const index = tasks.todo.indexOf(oldTask);
