@@ -16,12 +16,12 @@ let todo = [];
 let done = [];
 
 // Korrigierte Route: API-Endpunkt zum Abrufen von Aufgaben
-app.get("/api/tasks", (req, res) => {
+app.get('/api/tasks', (req, res) => {
   res.json({ todo, done });
 });
 
-// POST-Endpunkt: Aufgabe zu TODO hinzufügen
-app.post("/api/todo", (req, res) => {
+//Aufgabe zu TODO hinzufügen
+app.post('/api/todo', (req, res) => {
   const task = req.body.task; // Aufgabe aus dem Request-Body
   if (task) {
     todo.push(task);
@@ -31,8 +31,8 @@ app.post("/api/todo", (req, res) => {
   }
 });
 
-// POST-Endpunkt: Aufgabe zu DONE hinzufügen
-app.post("/api/done", (req, res) => {
+//Aufgabe zu DONE hinzufügen
+app.post('/api/done', (req, res) => {
   const task = req.body.task; // Aufgabe aus dem Request-Body
   if (task) {
     done.push(task);
@@ -42,8 +42,20 @@ app.post("/api/done", (req, res) => {
   }
 });
 
+//Einträge bearbeiten
+app.post('/api/todo/edit', (req, res) => {
+    const { oldTask, newTask } = req.body; // alte und neue Aufgabe aus dem Request-Body
+    const index = todo.indexOf(oldTask);
+    if (index !== -1 && newTask) {
+        todo[index] = newTask; // Aufgabe aktualisieren
+        res.json({ message: 'Aufgabe aktualisiert', task: newTask });
+    } else {
+        res.status(404).json({ message: 'Aufgabe nicht gefunden oder ungültige Eingabe' });
+    }
+});
+
 // PUT-Endpunkt: Aufgabe von TODO nach DONE verschieben
-app.put("/api/tasks/move", (req, res) => {
+app.put('/api/tasks/move', (req, res) => {
   const { task } = req.body; // Aufgabe aus dem Request-Body
   const index = todo.indexOf(task);
   if (index !== -1) {
@@ -53,6 +65,13 @@ app.put("/api/tasks/move", (req, res) => {
   } else {
     res.status(404).json({ message: "Aufgabe nicht gefunden in TODO" });
   }
+});
+
+//Alle Einträge löschen
+app.delete('/api/tasks', (req, res) => {
+    todo = []; // Lösche alle TODOs
+    done = []; // Lösche alle DONEs
+    res.json({ message: 'Alle Aufgaben wurden gelöscht' });
 });
 
 app.listen(PORT, () => {
