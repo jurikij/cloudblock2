@@ -2,20 +2,27 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios'
 
-const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
-  const [task, setTask] = useState("");
+const TaskEdit = () => {
+  const [oldTask, setOldTask] = useState('');
+  const [newTask, setNewTask] = useState('');
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    if (taskToEdit) {
-      setTask(taskToEdit);
-    }
-  }, [taskToEdit]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (task) {
-      onUpdateTask(task); // Aufgabe aktualisieren
-    }
+
+    try {
+      const response = await axios.post('http://localhost:2000/api/todo/edit', {
+        oldTask,
+        newTask,
+      });
+      setMessage(response.data.message);
+      } catch(error) {
+        if(error.response) {
+          setMessage(error.response.data.message);
+        } else {
+          setMessage('An error occured while updating the task');
+        }
+      }
   };
 
   return (
