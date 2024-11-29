@@ -4,6 +4,7 @@ import axios from "axios";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import TaskEdit from "./components/TaskEdit";
+import pic from "./to-do-list.png";
 
 const API_URL = "http://localhost:2000/api";
 
@@ -55,7 +56,18 @@ function App() {
 
   return (
     <div>
-      <h1 className="container">To-do-Liste</h1>
+      <nav
+        class="navbar bg-dark border-bottom border-body"
+        data-bs-theme="dark"
+      >
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src={pic} alt="Logo" class="d-inline-block align-text-top" />
+            TodoLists
+          </a>
+        </div>
+      </nav>
+      <h1 className="überschrift">To-do-Liste</h1>
       <div />
       {/* Eingabemaske */}
       <TaskInput onAddTask={addTask} />
