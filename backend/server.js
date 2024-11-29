@@ -1,12 +1,12 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const app = express();
 const PORT = 2000;
-const cors = require('cors'); //CORS damit Frontend auf API zugreifen kann
+const cors = require("cors"); //CORS damit Frontend auf API zugreifen kann
 
-app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, '..', 'frontend', 'src', 'App.jsx');
-    res.sendFile(filePath);
+app.get("/", (req, res) => {
+  const filePath = path.join(__dirname, "..", "frontend", "index.html");
+  res.sendFile(filePath);
 });
 
 app.use(cors());
@@ -15,12 +15,12 @@ app.use(express.json()); //Middleware zum parsen von JSON-Dateien
 let todo = [];
 let done = [];
 
-app.get('api/data/tasks', (req, res) => {
+app.get('api/tasks', (req, res) => {
     res.json({ todo, done });
 });
 
 // POST-Endpunkt: Aufgabe zu TODO hinzufügen
-app.post('/api/data/todo', (req, res) => {
+app.post('/api/todo', (req, res) => {
     const task = req.body.task; // Aufgabe aus dem Request-Body
     if (task) {
         todo.push(task);
@@ -31,7 +31,7 @@ app.post('/api/data/todo', (req, res) => {
 });
 
 // POST-Endpunkt: Aufgabe zu DONE hinzufügen
-app.post('/api/data/done', (req, res) => {
+app.post('/api/done', (req, res) => {
     const task = req.body.task; // Aufgabe aus dem Request-Body
     if (task) {
         done.push(task);
@@ -42,7 +42,7 @@ app.post('/api/data/done', (req, res) => {
 });
 
 // PUT-Endpunkt: Aufgabe von TODO nach DONE verschieben
-app.put('/api/data/tasks/move', (req, res) => {
+app.put('/api/tasks/move', (req, res) => {
     const { task } = req.body; // Aufgabe aus dem Request-Body
     const index = todo.indexOf(task);
     if (index !== -1) {
@@ -55,5 +55,5 @@ app.put('/api/data/tasks/move', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log('The server is running on http://localhost:${PORT}');
+  console.log("The server is running on http://localhost:${PORT}");
 });

@@ -1,73 +1,68 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:2000/data";
+const API_URL = "http://localhost:2000/api";
 
 function App() {
-  const [entries, setEntries] = useState([]);
-  const [formData, setFormData] = useState({ name: "", description: "" });
-  const [editId, setEditId] = useState(null);
+  const [todo, setTodo] = useState([]); // Aufgaben in TODO
+  const [done, setDone] = useState([]); // Aufgaben in DONE
+  const [task, setTask] = useState(""); // Eingabewert für die Aufgabe
 
-  const fetchEntries = async () => {
-    const response = await axios.get(API_URL);
-    setEntries(response.data);
-  };
-
+  // Aufgaben beim Laden der Seite abrufen
   useEffect(() => {
-    fetchEntries();
+    fetchTasks();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (editId) {
-      await axios.put(`${API_URL}/${editId}`, formData);
-    } else {
-      await axios.post(API_URL, formData);
+  // Aufgaben von der API abrufen
+  const fetchTasks = async () => {
+    const response = await axios.get(`${API_URL}/tasks`);
+    setTodo(response.data.todo);
+    setDone(response.data.done);
+  };
+
+  // Aufgabe zu TODO hinzufügen
+  const addTask = async () => {
+    if (task) {
+      await axios.post(`${API_URL}/todo`, { task });
+      setTask("");
+      fetchTasks(); // Aufgaben nach dem Hinzufügen neu laden
     }
-    setFormData({ name: "", description: "" });
-    setEditId(null);
-    fetchEntries();
   };
 
-  const handleDelete = async (id) => {
-    await axios.delete(`${API_URL}/${id}`);
-    fetchEntries();
-  };
-
-  const handleEdit = (entry) => {
-    setFormData({ name: entry.name, description: entry.description });
-    setEditId(entry.id);
+  // Aufgabe von TODO nach DONE verschieben
+  const moveTaskToDone = async (task) => {
+    await axios.put(`${API_URL}/tasks/move`, { task });
+    fetchTasks(); // Aufgaben nach dem Verschieben neu laden
   };
 
   return (
-    <div className="container">
+    <div>
       <h1>To-do-Liste</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-        />
-        <textarea
-          placeholder="Inhalt"
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          required
-        ></textarea>
-        <button type="submit">{editId ? "Update" : "Add"}</button>
-      </form>
+
+      <input
+        type="text"
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+        placeholder="Neue Aufgabe eingeben"
+      />
+      <button onClick={addTask}>Aufgabe hinzufügen</button>
+
+      <h2>TODO</h2>
       <ul>
-        {entries.map((entry) => (
-          <li key={entry.id}>
-            <h2>{entry.name}</h2>
-            <p>{entry.description}</p>
-            <button onClick={() => handleEdit(entry)}>Edit</button>
-            <button onClick={() => handleDelete(entry.id)}>Delete</button>
+        {todo.map((t, index) => (
+          <li key={index}>
+            {t}
+            <button onClick={() => moveTaskToDone(t)}>
+              Verschieben nach DONE
+            </button>
           </li>
+        ))}
+      </ul>
+
+      <h2>DONE</h2>
+      <ul>
+        {done.map((t, index) => (
+          <li key={index}>{t}</li>
         ))}
       </ul>
     </div>
