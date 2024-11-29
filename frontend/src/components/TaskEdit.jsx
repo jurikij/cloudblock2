@@ -1,28 +1,20 @@
 // src/components/TaskEdit.jsx
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
 
-const TaskEdit = () => {
-  const [oldTask, setOldTask] = useState('');
-  const [newTask, setNewTask] = useState('');
-  const [message, setMessage] = useState('');
+const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
+  const [task, setTask] = useState("");
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (taskToEdit) {
+      setTask(taskToEdit);
+    }
+  }, [taskToEdit]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post('http://localhost:2000/api/todo/edit', {
-        oldTask,
-        newTask,
-      });
-      setMessage(response.data.message);
-      } catch(error) {
-        if(error.response) {
-          setMessage(error.response.data.message);
-        } else {
-          setMessage('An error occured while updating the task');
-        }
-      }
+    if (task) {
+      onUpdateTask(task); // Aufgabe aktualisieren
+    }
   };
 
   return (

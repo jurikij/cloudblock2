@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TaskInput from "./components/TaskInput";
@@ -17,9 +18,13 @@ function App() {
   }, []);
 
   const fetchTasks = async () => {
-    const response = await axios.get(`${API_URL}/tasks`);
-    setTodo(response.data.todo);
-    setDone(response.data.done);
+    try {
+      const response = await axios.get(`${API_URL}/tasks`);
+      setTodo(response.data.todo);
+      setDone(response.data.done);
+    } catch (error) {
+      console.error("Fehler beim Laden der Aufgaben:", error);
+    }
   };
 
   const addTask = async (task) => {
@@ -32,17 +37,15 @@ function App() {
     fetchTasks(); // Aufgaben nach dem Verschieben neu laden
   };
 
-  const updateTask = async (updatedTask) => {
-    await axios.post(`${API_URL}/todo/edit`, {
-      oldTask: taskToEdit,
-      newTask: updatedTask,
-    });
-    setTaskToEdit(""); // Bearbeitungsmodus verlassen
+  // Aufgabe bearbeiten
+  const updateTask = async (oldTask, newTask) => {
+    await axios.post(`${API_URL}/todo/edit`, { oldTask, newTask });
     fetchTasks(); // Aufgaben nach dem Update neu laden
   };
 
   const handleTaskEditSubmit = (editedTask) => {
-    updateTask(editedTask);
+    updateTask(taskToEdit, editedTask); // Aufgabe bearbeiten und mit neuem Text absenden
+    setTaskToEdit(""); // Bearbeitungsmodus verlassen
   };
 
   const handleDeleteAllTasks = async () => {
@@ -52,8 +55,8 @@ function App() {
 
   return (
     <div>
-      <h1>To-do-Liste</h1>
-
+      <h1 className="container">To-do-Liste</h1>
+      <div />
       {/* Eingabemaske */}
       <TaskInput onAddTask={addTask} />
 
@@ -61,7 +64,7 @@ function App() {
       <TaskList
         todo={todo}
         onMoveToDone={moveTaskToDone}
-        setTaskToEdit={setTaskToEdit}
+        setTaskToEdit={setTaskToEdit} // Übergebe setTaskToEdit an TaskList
       />
 
       {/* Bearbeitungsformular */}
@@ -72,7 +75,7 @@ function App() {
         />
       )}
 
-      <h2>DONE</h2>
+      <h2 className="container">DONE</h2>
       <ul>
         {done.map((t, index) => (
           <li key={index}>{t}</li>

@@ -3,7 +3,7 @@ import React from "react";
 const TaskList = ({ todo, onMoveToDone }) => {
   return (
     <div>
-      <h2>TODO</h2>
+      <h2 className="container">TODO</h2>
       <ul>
         {todo.map((t, index) => (
           <li key={index}>
