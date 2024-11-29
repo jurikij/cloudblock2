@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TaskInput from "./components/TaskInput";
@@ -12,6 +11,7 @@ function App() {
   const [done, setDone] = useState([]); // Aufgaben in DONE
   const [taskToEdit, setTaskToEdit] = useState(""); // Aufgabe zum Bearbeiten
 
+  // Aufgaben beim Laden der Seite abrufen
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -33,9 +33,21 @@ function App() {
   };
 
   const updateTask = async (updatedTask) => {
-    await axios.put(`${API_URL}/tasks/move`, { task: updatedTask });
+    await axios.post(`${API_URL}/todo/edit`, {
+      oldTask: taskToEdit,
+      newTask: updatedTask,
+    });
     setTaskToEdit(""); // Bearbeitungsmodus verlassen
     fetchTasks(); // Aufgaben nach dem Update neu laden
+  };
+
+  const handleTaskEditSubmit = (editedTask) => {
+    updateTask(editedTask);
+  };
+
+  const handleDeleteAllTasks = async () => {
+    await axios.delete(`${API_URL}/tasks`);
+    fetchTasks(); // Alle Aufgaben nach dem Löschen neu laden
   };
 
   return (
@@ -46,20 +58,29 @@ function App() {
       <TaskInput onAddTask={addTask} />
 
       {/* Liste der gespeicherten Aufgaben */}
-      <TaskList todo={todo} onMoveToDone={moveTaskToDone} />
+      <TaskList
+        todo={todo}
+        onMoveToDone={moveTaskToDone}
+        setTaskToEdit={setTaskToEdit}
+      />
 
       {/* Bearbeitungsformular */}
       {taskToEdit && (
-        <TaskEdit taskToEdit={taskToEdit} onUpdateTask={updateTask} />
+        <TaskEdit
+          taskToEdit={taskToEdit}
+          onTaskEditSubmit={handleTaskEditSubmit}
+        />
       )}
 
-      {/* DONE-Liste */}
       <h2>DONE</h2>
       <ul>
         {done.map((t, index) => (
           <li key={index}>{t}</li>
         ))}
       </ul>
+
+      {/* Button zum Löschen aller Aufgaben */}
+      <button onClick={handleDeleteAllTasks}>Alle Aufgaben löschen</button>
     </div>
   );
 }
