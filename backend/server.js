@@ -63,15 +63,17 @@ app.post('/api/todo/edit', (req, res) => {
 
 //Task zu done schieben
 app.put('/api/tasks/move', (req, res) => {
-  const { task } = req.body; // Aufgabe aus dem Request-Body
-  const index = todo.indexOf(task);
-  if (index !== -1) {
-    todo.splice(index, 1); // Entferne aus TODO
-    done.push(task); // Füge zu DONE hinzu
-    res.json({ message: "Aufgabe verschoben", task });
-  } else {
-    res.status(404).json({ message: "Aufgabe nicht gefunden in TODO" });
-  }
+    const { task } = req.body; // Task from request body
+    const tasks = readTasks();
+    const index = tasks.todo.indexOf(task);
+    if (index !== -1) {
+        tasks.todo.splice(index, 1); // Remove from TODO
+        tasks.done.push(task);        // Add to DONE
+        writeTasks(tasks); // Save updated tasks to the JSON file
+        res.json({ message: 'Task moved', task });
+    } else {
+        res.status(404).json({ message: 'Task not found in TODO' });
+    }
 });
 
 //Alle Einträge löschen
