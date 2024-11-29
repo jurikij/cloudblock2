@@ -6,7 +6,7 @@ const cors = require('cors'); // CORS, damit Frontend auf API zugreifen kann
 const fs = require('fs')
 
 app.get("/", (req, res) => {
-  const filePath = path.join(__dirname, "..", "frontend", "index.html");
+  const filePath = path.join(__dirname, "..", 'frontend', 'index.html');
   res.sendFile(filePath);
 });
 
