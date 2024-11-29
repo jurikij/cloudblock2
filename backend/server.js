@@ -4,7 +4,8 @@ const app = express();
 const PORT = 2000;
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend/index.html'));
+    const filePath = path.join(__dirname, '..', 'frontend', 'src', 'App.jsx');
+    res.sendFile(filePath);
 });
 
 app.listen(PORT, () => {
