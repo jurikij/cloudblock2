@@ -13,7 +13,7 @@ const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (task) {
-      onUpdateTask(task); // Aufgabe aktualisieren
+      onUpdateTask(setTask); // Aufgabe aktualisieren
     }
   };
 
