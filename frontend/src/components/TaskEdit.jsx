@@ -1,61 +1,37 @@
 // src/components/TaskEdit.jsx
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from 'axios'
 
-const EditTask = () => {
-    const [oldTask, setOldTask] = useState('');
-    const [newTask, setNewTask] = useState('');
-    const [message, setMessage] = useState('');
+const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
+  const [task, setTask] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission
+  useEffect(() => {
+    if (taskToEdit) {
+      setTask(taskToEdit);
+    }
+  }, [taskToEdit]);
 
-        try {
-            const response = await axios.post('http://localhost:3000/api/todo/edit', {
-                oldTask,
-                newTask,
-            });
-            setMessage(response.data.message);
-        } catch (error) {
-            if (error.response) {
-                setMessage(error.response.data.message); // Display error message from server
-            } else {
-                setMessage('An error occurred while updating the task.');
-            }
-        }
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (task) {
+      onUpdateTask(task); // Aufgabe aktualisieren
+    }
+  };
 
-    return (
-        <div>
-            <h2>Edit Task</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        Old Task:
-                        <input
-                            type="text"
-                            value={oldTask}
-                            onChange={(e) => setOldTask(e.target.value)}
-                            required
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        New Task:
-                        <input
-                            type="text"
-                            value={newTask}
-                            onChange={(e) => setNewTask(e.target.value)}
-                            required
-                        />
-                    </label>
-                </div>
-                <button type="submit">Update Task</button>
-            </form>
-            {message && <p>{message}</p>} {/* Display success/error message */}
-        </div>
-    );
+  return (
+    <div>
+      <h2>Aufgabe bearbeiten</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="Aufgabe bearbeiten"
+        />
+        <button type="submit">Speichern</button>
+      </form>
+    </div>
+  );
 };
 
-export default EditTask;
+export default TaskEdit;
