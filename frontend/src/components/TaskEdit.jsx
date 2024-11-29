@@ -1,5 +1,7 @@
 // src/components/TaskEdit.jsx
+import axios from "axios";
 import React, { useState, useEffect } from "react";
+
 
 const EditTask = () => {
     const [oldTask, setOldTask] = useState('');
@@ -10,7 +12,7 @@ const EditTask = () => {
         e.preventDefault(); // Prevent default form submission
 
         try {
-            const response = await axios.post('http://localhost:3000/api/todo/edit', {
+            const response = await axios.put('http://localhost:2000/api/todo/edit', {
                 oldTask,
                 newTask,
             });
@@ -57,4 +59,4 @@ const EditTask = () => {
     );
 };
 
-export default TaskEdit;
+export default EditTask;
