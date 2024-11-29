@@ -2,8 +2,8 @@ import React from "react";
 
 const TaskList = ({ todo, onMoveToDone }) => {
   return (
-    <div>
-      <h2 className="container">TODO</h2>
+    <div className="container">
+      <h2 className="titel">TODO</h2>
       <ul>
         {todo.map((t, index) => (
           <li key={index}>

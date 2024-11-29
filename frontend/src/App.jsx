@@ -59,8 +59,6 @@ function App() {
       <div />
       {/* Eingabemaske */}
       <TaskInput onAddTask={addTask} />
-
-      {/* Liste der gespeicherten Aufgaben */}
       <TaskList
         todo={todo}
         onMoveToDone={moveTaskToDone}
@@ -74,16 +72,18 @@ function App() {
           onTaskEditSubmit={handleTaskEditSubmit}
         />
       )}
-
-      <h2 className="container">DONE</h2>
-      <ul>
-        {done.map((t, index) => (
-          <li key={index}>{t}</li>
-        ))}
-      </ul>
-
+      <div className="container">
+        <h2>DONE</h2>
+        <ul>
+          {done.map((t, index) => (
+            <li key={index}>{t}</li>
+          ))}
+        </ul>
+      </div>
       {/* Button zum Löschen aller Aufgaben */}
-      <button onClick={handleDeleteAllTasks}>Alle Aufgaben löschen</button>
+      <button onClick={handleDeleteAllTasks} className="container">
+        Alle Aufgaben löschen
+      </button>
     </div>
   );
 }

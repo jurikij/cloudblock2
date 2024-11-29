@@ -18,6 +18,7 @@ const TaskInput = ({ onAddTask }) => {
         <input
           type="text"
           value={task}
+          className="input-group flex-nowrap"
           onChange={(e) => setTask(e.target.value)}
           placeholder="Aufgabe eingeben"
         />
