@@ -10,6 +10,7 @@ app.get("/", (req, res) => {
   res.sendFile(filePath);
 });
 
+//Cors for connection between front and backend
 app.use(cors());
 app.use(express.json()); // Middleware zum Parsen von JSON-Dateien
 
