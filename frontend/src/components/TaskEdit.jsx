@@ -17,20 +17,37 @@ const TaskEdit = ({ taskToEdit, onUpdateTask }) => {
     }
   };
 
-  return (
-    <div>
-      <h2>Aufgabe bearbeiten</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          placeholder="Aufgabe bearbeiten"
-        />
-        <button type="submit">Speichern</button>
-      </form>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Edit Task</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>
+                        Old Task:
+                        <input
+                            type="text"
+                            value={oldTask}
+                            onChange={(e) => setOldTask(e.target.value)}
+                            required
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        New Task:
+                        <input
+                            type="text"
+                            value={newTask}
+                            onChange={(e) => setNewTask(e.target.value)}
+                            required
+                        />
+                    </label>
+                </div>
+                <button type="submit">Update Task</button>
+            </form>
+            {message && <p>{message}</p>} {/* Display success/error message */}
+        </div>
+    );
 };
 
 export default TaskEdit;
